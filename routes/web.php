@@ -16,3 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Add a named login route for the API authentication redirects
+Route::get('/login', function() {
+    return redirect('/');
+})->name('login');

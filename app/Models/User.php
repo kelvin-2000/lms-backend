@@ -21,6 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'title',
+        'avatar',
+        'bio',
     ];
 
     /**
@@ -41,5 +45,102 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'role' => 'string',
     ];
+    
+    /**
+     * Get the courses that belong to the user as an instructor.
+     */
+    public function courses()
+    {
+        return $this->hasMany(Course::class, 'instructor_id');
+    }
+    
+    /**
+     * Get the enrollments for the user.
+     */
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+    
+    /**
+     * Get the discussions created by the user.
+     */
+    public function discussions()
+    {
+        return $this->hasMany(Discussion::class);
+    }
+    
+    /**
+     * Get the discussion replies created by the user.
+     */
+    public function discussionReplies()
+    {
+        return $this->hasMany(DiscussionReply::class);
+    }
+    
+    /**
+     * Get the event registrations for the user.
+     */
+    public function eventRegistrations()
+    {
+        return $this->hasMany(EventRegistration::class);
+    }
+    
+    /**
+     * Get the job applications for the user.
+     */
+    public function jobApplications()
+    {
+        return $this->hasMany(JobApplication::class);
+    }
+    
+    /**
+     * Get the mentorship programs where the user is a mentor.
+     */
+    public function mentorshipPrograms()
+    {
+        return $this->hasMany(MentorshipProgram::class, 'mentor_id');
+    }
+    
+    /**
+     * Get the mentorship applications for the user.
+     */
+    public function mentorshipApplications()
+    {
+        return $this->hasMany(MentorshipApplication::class);
+    }
+    
+    /**
+     * Get the mentorship sessions where the user is a mentor.
+     */
+    public function mentorSessions()
+    {
+        return $this->hasMany(MentorshipSession::class, 'mentor_id');
+    }
+    
+    /**
+     * Get the mentorship sessions where the user is a mentee.
+     */
+    public function menteeSessions()
+    {
+        return $this->hasMany(MentorshipSession::class, 'mentee_id');
+    }
+    
+    /**
+     * Check if the user is an instructor or admin.
+     */
+    public function isInstructorOrAdmin()
+    {
+        return in_array($this->role, ['instructor', 'admin', 'superAdmin']);
+    }
+    
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin()
+    {
+        return in_array($this->role, ['admin', 'superAdmin']);
+    }
 }
