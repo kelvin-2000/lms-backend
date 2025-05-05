@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -90,10 +91,37 @@ class EnrollmentController extends Controller
             'progress' => 0
         ]);
         
+        // Get the previous students_count for debugging
+        $previousCount = $course->students_count;
+        
+        // Try updating students_count with direct SQL update as a workaround
+        try {
+            \DB::table('courses')
+                ->where('id', $course->id)
+                ->increment('students_count');
+                
+            // Refresh course model to get the latest data
+            $course->refresh();
+            
+            // Log the update for debugging
+            \Log::info('Course enrollment - Course ID: ' . $course->id . 
+                      ', Previous count: ' . $previousCount . 
+                      ', New count: ' . $course->students_count);
+        } catch (\Exception $e) {
+            \Log::error('Error updating students_count: ' . $e->getMessage());
+        }
+        
+        // Load the updated course data for response
+        $enrollment->load(['course:id,title,thumbnail,description,instructor_id,students_count']);
+        
         return response()->json([
             'success' => true,
             'message' => 'Successfully enrolled in the course',
-            'data' => $enrollment
+            'data' => $enrollment,
+            'debug' => [
+                'previous_count' => $previousCount,
+                'new_count' => $course->students_count
+            ]
         ], 201);
     }
 
@@ -220,8 +248,19 @@ class EnrollmentController extends Controller
             ], 400);
         }
         
+        // Store previous status to check if we need to update students_count
+        $previousStatus = $enrollment->status;
+        
         $enrollment->status = 'cancelled';
         $enrollment->save();
+        
+        // Decrement the students_count only if the enrollment was active or completed
+        if ($previousStatus === 'active' || $previousStatus === 'completed') {
+            $course = Course::find($enrollment->course_id);
+            if ($course && $course->students_count > 0) {
+                $course->decrement('students_count');
+            }
+        }
         
         return response()->json([
             'success' => true,
@@ -245,11 +284,196 @@ class EnrollmentController extends Controller
             ], 403);
         }
         
+        // Only decrement students_count if enrollment was active or completed
+        if ($enrollment->status === 'active' || $enrollment->status === 'completed') {
+            $course = Course::find($enrollment->course_id);
+            if ($course && $course->students_count > 0) {
+                $course->decrement('students_count');
+            }
+        }
+        
         $enrollment->delete();
         
         return response()->json([
             'success' => true,
             'message' => 'Enrollment deleted successfully'
+        ]);
+    }
+
+    /**
+     * Direct enrollment for students without approval.
+     * This endpoint allows students to enroll in courses automatically.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function studentEnroll(Request $request)
+    {
+        $user = Auth::user();
+        
+        // Check if user has student role
+        if ($user->role !== 'student') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only students can use this enrollment endpoint'
+            ], 403);
+        }
+        
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required|exists:courses,id',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        
+        $course = Course::find($request->course_id);
+        
+        // Check if the course exists
+        if (!$course) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Course not found'
+            ], 404);
+        }
+        
+        // Check if the course is published
+        if ($course->status !== 'published') {
+            return response()->json([
+                'success' => false,
+                'message' => 'This course is not available for enrollment'
+            ], 400);
+        }
+        
+        // Check if the user is already enrolled
+        $existingEnrollment = Enrollment::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->first();
+            
+        if ($existingEnrollment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are already enrolled in this course'
+            ], 400);
+        }
+        
+        // Create enrollment
+        $enrollment = Enrollment::create([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+            'status' => 'active',
+            'progress' => 0
+        ]);
+        
+        // Get the previous students_count for debugging
+        $previousCount = $course->students_count;
+        
+        // Try updating students_count with direct SQL update as a workaround
+        try {
+            \DB::table('courses')
+                ->where('id', $course->id)
+                ->increment('students_count');
+                
+            // Refresh course model to get the latest data
+            $course->refresh();
+            
+            // Log the update for debugging
+            \Log::info('Student enrollment - Course ID: ' . $course->id . 
+                      ', Previous count: ' . $previousCount . 
+                      ', New count: ' . $course->students_count);
+        } catch (\Exception $e) {
+            \Log::error('Error updating students_count: ' . $e->getMessage());
+        }
+        
+        // Load course data to include in response
+        $enrollment->load(['course:id,title,thumbnail,description,instructor_id,students_count', 'course.instructor:id,name']);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Successfully enrolled in the course',
+            'data' => $enrollment,
+            'debug' => [
+                'previous_count' => $previousCount,
+                'new_count' => $course->students_count
+            ]
+        ], 201);
+    }
+
+    /**
+     * Check enrollment status for a user in a specific course.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkStatus(Request $request)
+    {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required|exists:courses,id',
+            'user_id' => 'sometimes|exists:users,id',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        
+        $user = Auth::user();
+        $userId = $request->user_id ?? $user->id;
+        
+        // If checking for another user, ensure current user has permission
+        if ($userId != $user->id && !in_array($user->role, ['admin', 'superAdmin', 'instructor'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authorized to check enrollment status for other users'
+            ], 403);
+        }
+        
+        // If instructor, ensure they can only check enrollments for their courses
+        if ($user->role === 'instructor' && $userId != $user->id) {
+            $course = Course::find($request->course_id);
+            if (!$course || $course->instructor_id !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You can only check enrollment status for your own courses'
+                ], 403);
+            }
+        }
+        
+        // Find enrollment
+        $enrollment = Enrollment::where('user_id', $userId)
+            ->where('course_id', $request->course_id)
+            ->first();
+            
+        if (!$enrollment) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User is not enrolled in this course',
+                'data' => [
+                    'is_enrolled' => false,
+                    'enrollment' => null
+                ]
+            ]);
+        }
+        
+        // Load related data for more context
+        $enrollment->load(['course:id,title,thumbnail,description,instructor_id', 'course.instructor:id,name']);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'User is enrolled in this course',
+            'data' => [
+                'is_enrolled' => true,
+                'enrollment' => $enrollment
+            ]
         ]);
     }
 } 

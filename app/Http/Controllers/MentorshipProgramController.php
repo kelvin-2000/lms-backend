@@ -16,17 +16,12 @@ class MentorshipProgramController extends Controller
      */
     public function open(Request $request)
     {
-        $query = MentorshipProgram::with('mentor');
-            // ->where('status', 'open');
+        $query = MentorshipProgram::with('mentor')
+            ->where('status', 'open');
 
         // Apply category filter
         if ($request->has('category') && $request->category !== '') {
             $query->where('category', $request->category);
-        }
-
-        // Apply status filter
-        if ($request->has('status') && $request->status !== '') {
-            $query->where('status', $request->status);
         }
 
         // Apply duration filter

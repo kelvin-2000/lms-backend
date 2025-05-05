@@ -43,6 +43,18 @@ Route::get('/events/{event}', [EventController::class, 'show']);
 Route::get('/job-opportunities/open', [JobOpportunityController::class, 'open']);
 Route::get('/job-opportunities/{jobOpportunity}', [JobOpportunityController::class, 'show']);
 Route::get('/mentorship-programs/open', [MentorshipProgramController::class, 'open']);
+Route::get('/mentorship-programs/debug/{id}', function($id) {
+    $program = \App\Models\MentorshipProgram::find($id);
+    if (!$program) {
+        return response()->json(['error' => "Program ID $id not found"], 404);
+    }
+    return response()->json([
+        'id' => $program->id,
+        'title' => $program->title,
+        'status' => $program->status,
+        'raw_record' => \DB::table('mentorship_programs')->where('id', $id)->first()
+    ]);
+});
 Route::get('/mentorship-programs/{mentorshipProgram}', [MentorshipProgramController::class, 'show']);
 
 // Protected Routes
@@ -85,6 +97,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/enrollments/{enrollment}/progress', [EnrollmentController::class, 'updateProgress']);
     Route::put('/enrollments/{enrollment}/complete', [EnrollmentController::class, 'complete']);
     Route::put('/enrollments/{enrollment}/cancel', [EnrollmentController::class, 'cancel']);
+    Route::post('/student/enroll', [EnrollmentController::class, 'studentEnroll']);
+    Route::post('/enrollment/check-status', [EnrollmentController::class, 'checkStatus']);
     
     // Event Routes - Admin only
     Route::middleware('role:admin')->group(function () {
@@ -99,6 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('event-registrations', EventRegistrationController::class);
     Route::put('/event-registrations/{eventRegistration}/attend', [EventRegistrationController::class, 'markAttended']);
     Route::put('/event-registrations/{eventRegistration}/cancel', [EventRegistrationController::class, 'cancel']);
+    Route::post('/event-registration/check-status', [EventRegistrationController::class, 'checkStatus']);
     
     // Job Opportunity Routes - Admin only
     Route::middleware('role:admin')->group(function () {
@@ -126,6 +141,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('mentorship-applications', MentorshipApplicationController::class);
     Route::put('/mentorship-applications/{mentorshipApplication}/accept', [MentorshipApplicationController::class, 'accept']);
     Route::put('/mentorship-applications/{mentorshipApplication}/reject', [MentorshipApplicationController::class, 'reject']);
+    Route::post('/mentorship-application/check-status', [MentorshipApplicationController::class, 'checkStatus']);
     
     // Mentorship Session Routes
     Route::apiResource('mentorship-sessions', MentorshipSessionController::class);

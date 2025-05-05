@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventRegistration;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -126,6 +127,69 @@ class EventRegistrationController extends Controller
             'success' => true,
             'data' => $registration,
             'message' => 'Registration status updated successfully.'
+        ]);
+    }
+
+    /**
+     * Check registration status for a user in a specific event.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkStatus(Request $request)
+    {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'event_id' => 'required|exists:events,id',
+            'user_id' => 'sometimes|exists:users,id',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        
+        $user = Auth::user();
+        $userId = $request->user_id ?? $user->id;
+        
+        // If checking for another user, ensure current user has permission
+        if ($userId != $user->id && !in_array($user->role, ['admin', 'superAdmin'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authorized to check registration status for other users'
+            ], 403);
+        }
+        
+        // Find registration
+        $registration = EventRegistration::where('user_id', $userId)
+            ->where('event_id', $request->event_id)
+            ->first();
+            
+        if (!$registration) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User is not registered for this event',
+                'data' => [
+                    'is_registered' => false,
+                    'registration' => null
+                ]
+            ]);
+        }
+        
+        // Load related data for more context
+        $registration->load(['event:id,title,description,start_date,end_date,location,capacity']);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'User is registered for this event',
+            'data' => [
+                'is_registered' => true,
+                'registration_status' => $registration->status,
+                'registration' => $registration
+            ]
         ]);
     }
 } 
