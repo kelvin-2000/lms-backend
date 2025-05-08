@@ -414,4 +414,50 @@ class CourseController extends Controller
             'message' => 'Course enrollments retrieved successfully'
         ]);
     }
+
+    /**
+     * Get related courses for a specific instructor.
+     */
+    public function instructorRelatedCourses(Request $request, $instructorId)
+    {
+        try {
+            // Validate instructor exists
+            $instructor = \App\Models\User::where('id', $instructorId)
+                ->where('role', 'instructor')
+                ->first();
+                
+            if (!$instructor) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Instructor not found'
+                ], 404);
+            }
+            
+            // Get published courses by the instructor
+            $courses = Course::where('instructor_id', $instructorId)
+                ->where('status', 'published')
+                ->with('instructor:id,name,email,avatar,title,bio')
+                ->get();
+                
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'instructor' => [
+                        'id' => $instructor->id,
+                        'name' => $instructor->name,
+                        'avatar' => $instructor->avatar,
+                        'title' => $instructor->title,
+                        'bio' => $instructor->bio
+                    ],
+                    'courses' => $courses
+                ],
+                'message' => 'Instructor related courses retrieved successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving instructor related courses: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 } 

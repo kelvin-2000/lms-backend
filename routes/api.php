@@ -39,6 +39,7 @@ Route::get('/courses/featured', [CourseController::class, 'featured']);
 Route::get('/courses/popular', [CourseController::class, 'popular']);
 Route::get('/courses/latest', [CourseController::class, 'latest']);
 Route::get('/courses/{course}', [CourseController::class, 'show']);
+Route::get('/instructors/{instructorId}/related-courses', [CourseController::class, 'instructorRelatedCourses']);
 Route::get('/events/upcoming', [EventController::class, 'upcoming']);
 Route::get('/events/{event}', [EventController::class, 'show']);
 Route::get('/job-opportunities/open', [JobOpportunityController::class, 'open']);
