@@ -16,8 +16,12 @@ class MentorshipProgramController extends Controller
      */
     public function open(Request $request)
     {
-        $query = MentorshipProgram::with('mentor')
-            ->where('status', 'open');
+        $query = MentorshipProgram::with('mentor');
+
+        // Apply status filter
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
 
         // Apply category filter
         if ($request->has('category') && $request->category !== '') {
@@ -105,6 +109,7 @@ class MentorshipProgramController extends Controller
             'duration' => 'nullable|string|max:255',
             'capacity' => 'nullable|integer|min:1',
             'status' => 'required|in:open,closed,completed',
+            'category' => 'sometimes|required|string|in:web,mobile,design,database,career,other',
         ]);
 
         if ($validator->fails()) {
@@ -148,7 +153,7 @@ class MentorshipProgramController extends Controller
             'duration' => 'nullable|string|max:255',
             'capacity' => 'nullable|integer|min:1',
             'status' => 'sometimes|required|in:open,closed,completed',
-            'category' => 'nullable|string|in:technology,business,career,academic',
+            'category' => 'sometimes|required|string|in:web,mobile,design,database,career,other',
         ]);
 
         if ($validator->fails()) {

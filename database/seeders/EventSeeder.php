@@ -8,6 +8,11 @@ use Illuminate\Database\Seeder;
 class EventSeeder extends Seeder
 {
     /**
+     * Default thumbnail path for events
+     */
+    private const DEFAULT_EVENT_THUMBNAIL = '/assets/events/event.jpg';
+    
+    /**
      * Run the database seeds.
      */
     public function run(): void
@@ -19,7 +24,7 @@ class EventSeeder extends Seeder
                 'start_date' => '2025-12-15 18:00:00',
                 'end_date' => '2025-12-15 20:00:00',
                 'location' => 'Online',
-                'thumbnail' => '/assets/events/webdev-trends.jpg',
+                'thumbnail' => self::DEFAULT_EVENT_THUMBNAIL,
                 'capacity' => 500,
                 'type' => 'webinar',
                 'status' => 'upcoming',
@@ -30,7 +35,7 @@ class EventSeeder extends Seeder
                 'start_date' => '2025-12-20 09:00:00',
                 'end_date' => '2025-12-21 17:00:00',
                 'location' => 'Tech Hub, San Francisco',
-                'thumbnail' => '/assets/events/react-workshop.jpg',
+                'thumbnail' => self::DEFAULT_EVENT_THUMBNAIL,
                 'capacity' => 50,
                 'type' => 'workshop',
                 'status' => 'upcoming',
@@ -41,7 +46,7 @@ class EventSeeder extends Seeder
                 'start_date' => '2025-06-10 08:00:00',
                 'end_date' => '2025-06-12 18:00:00',
                 'location' => 'Convention Center, New York',
-                'thumbnail' => '/assets/events/laravel-conf.jpg',
+                'thumbnail' => self::DEFAULT_EVENT_THUMBNAIL,
                 'capacity' => 1000,
                 'type' => 'conference',
                 'status' => 'upcoming',
@@ -52,9 +57,31 @@ class EventSeeder extends Seeder
                 'start_date' => '2025-07-25 14:00:00',
                 'end_date' => '2024-07-25 17:00:00',
                 'location' => 'Online',
-                'thumbnail' => '/assets/events/uiux-masterclass.jpg',
+                'thumbnail' => self::DEFAULT_EVENT_THUMBNAIL,
                 'capacity' => 300,
                 'type' => 'webinar',
+                'status' => 'upcoming',
+            ],
+            [
+                'title' => 'Mobile App Development Bootcamp',
+                'description' => 'An intensive bootcamp focused on mobile app development using React Native. Learn to build cross-platform apps that work on both iOS and Android.',
+                'start_date' => '2025-08-15 09:00:00',
+                'end_date' => '2025-08-19 17:00:00',
+                'location' => 'Tech Campus, Austin',
+                'thumbnail' => self::DEFAULT_EVENT_THUMBNAIL,
+                'capacity' => 75,
+                'type' => 'bootcamp',
+                'status' => 'upcoming',
+            ],
+            [
+                'title' => 'Database Optimization Summit',
+                'description' => 'Join database experts as they share advanced techniques for optimizing database performance, scaling, and security in modern applications.',
+                'start_date' => '2025-09-22 10:00:00',
+                'end_date' => '2025-09-23 16:00:00',
+                'location' => 'Online',
+                'thumbnail' => self::DEFAULT_EVENT_THUMBNAIL,
+                'capacity' => 400,
+                'type' => 'conference',
                 'status' => 'upcoming',
             ],
         ];

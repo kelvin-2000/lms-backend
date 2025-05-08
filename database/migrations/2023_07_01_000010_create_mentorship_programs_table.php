@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('duration')->nullable();
             $table->integer('capacity')->nullable();
             $table->enum('status', ['open', 'closed', 'completed'])->default('open');
-            $table->enum('category', ['frontend', 'backend', 'fullstack', 'mobile', 'design', 'career'])->nullable();
+            $table->enum('category', ['web', 'mobile', 'design', 'database', 'career', 'other'])->nullable();
             $table->timestamps();
         });
     }

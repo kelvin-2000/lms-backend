@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('location');
             $table->string('thumbnail')->nullable();
             $table->integer('capacity')->nullable();
-            $table->enum('type', ['webinar', 'workshop', 'conference', 'other'])->default('webinar');
+            $table->enum('type', ['webinar', 'workshop', 'conference', 'bootcamp', 'other'])->default('webinar');
             $table->enum('status', ['upcoming', 'ongoing', 'completed'])->default('upcoming');
             $table->timestamps();
         });

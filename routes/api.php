@@ -16,6 +16,7 @@ use App\Http\Controllers\MentorshipProgramController;
 use App\Http\Controllers\MentorshipApplicationController;
 use App\Http\Controllers\MentorshipSessionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,7 @@ Route::get('/events/{event}', [EventController::class, 'show']);
 Route::get('/job-opportunities/open', [JobOpportunityController::class, 'open']);
 Route::get('/job-opportunities/{jobOpportunity}', [JobOpportunityController::class, 'show']);
 Route::get('/mentorship-programs/open', [MentorshipProgramController::class, 'open']);
+Route::post('/contact', [ContactController::class, 'store']);
 Route::get('/mentorship-programs/debug/{id}', function($id) {
     $program = \App\Models\MentorshipProgram::find($id);
     if (!$program) {

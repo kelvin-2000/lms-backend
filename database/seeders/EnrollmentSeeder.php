@@ -49,9 +49,7 @@ class EnrollmentSeeder extends Seeder
         $webDevCourse = Course::where('title', 'Introduction to Web Development')->first();
         
         if ($webDevCourse) {
-            // Add enrollments to reach the sample data student count (15420)
-            // For demonstration purposes, we'll add just a few more to indicate popularity
-            for ($i = 0; $i < 10; $i++) {
+            for ($i = 1; $i < 10; $i++) {
                 $fakeStudent = User::create([
                     'name' => "Student $i",
                     'email' => "student$i@example.com",

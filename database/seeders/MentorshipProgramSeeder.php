@@ -15,20 +15,31 @@ class MentorshipProgramSeeder extends Seeder
     {
         $programs = [
             [
-                'mentor_name' => 'Jennifer Adams',
+                'mentor_name' => 'Jane Smith',
                 'title' => 'Frontend Development Career Guidance',
                 'description' => 'Get personalized guidance on building a successful career in frontend development. Topics include portfolio building, interview preparation, and skill development.',
                 'duration' => '3 months',
                 'capacity' => 5,
                 'status' => 'open',
+                'category' => 'web',
             ],
             [
-                'mentor_name' => 'Michael Johnson',
+                'mentor_name' => 'Mike Johnson',
                 'title' => 'Backend Development with Laravel',
                 'description' => 'Enhance your Laravel skills with hands-on mentorship focused on best practices, architecture patterns, and advanced features.',
                 'duration' => '4 months',
                 'capacity' => 3,
                 'status' => 'open',
+                'category' => 'web',
+            ],
+            [
+                'mentor_name' => 'Jane Smith',
+                'title' => 'Frontend Development Career Acceleration',
+                'description' => 'Accelerate your frontend development career with personalized mentorship from a Google Senior Frontend Engineer.',
+                'duration' => '12 weeks',
+                'capacity' => 5,
+                'status' => 'open',
+                'category' => 'web',
             ],
             [
                 'mentor_name' => 'Sarah Williams',
@@ -36,15 +47,17 @@ class MentorshipProgramSeeder extends Seeder
                 'description' => 'Learn the fundamentals of effective UI/UX design through real-world projects and feedback sessions.',
                 'duration' => '2 months',
                 'capacity' => 8,
-                'status' => 'closed',
+                'status' => 'open',
+                'category' => 'design',
             ],
             [
-                'mentor_name' => 'John Doe',
-                'title' => 'Full-Stack Web Development',
-                'description' => 'Comprehensive mentorship covering both frontend and backend development, with focus on building complete web applications.',
-                'duration' => '6 months',
-                'capacity' => 4,
+                'mentor_name' => 'Robert Chen',
+                'title' => 'Database Design and Optimization',
+                'description' => 'Master database design, management, and performance optimization. Learn about schema design, indexing strategies, query optimization, and data modeling for different applications.',
+                'duration' => '4 months',
+                'capacity' => 5,
                 'status' => 'open',
+                'category' => 'database',
             ],
             [
                 'mentor_name' => 'Emily Davis',
@@ -53,14 +66,7 @@ class MentorshipProgramSeeder extends Seeder
                 'duration' => '4 months',
                 'capacity' => 6,
                 'status' => 'open',
-            ],
-            [
-                'mentor_name' => 'Sarah Johnson',
-                'title' => 'Frontend Development Career Acceleration',
-                'description' => 'Accelerate your frontend development career with personalized mentorship from a Google Senior Frontend Engineer.',
-                'duration' => '12 weeks',
-                'capacity' => 5,
-                'status' => 'open',
+                'category' => 'mobile',
             ],
         ];
 
@@ -75,6 +81,7 @@ class MentorshipProgramSeeder extends Seeder
                     'duration' => $program['duration'],
                     'capacity' => $program['capacity'],
                     'status' => $program['status'],
+                    'category' => $program['category'],
                 ]);
             }
         }

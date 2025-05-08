@@ -125,6 +125,20 @@ class JobOpportunitySeeder extends Seeder
                 'deadline' => '2025-07-10',
                 'status' => 'open',
             ],
+            [
+                'title' => 'AI/ML Engineer',
+                'company' => 'NextGen AI Solutions',
+                'description' => 'Join our AI team to develop machine learning models and intelligent systems for various industries. You will work on cutting-edge projects using the latest AI technologies.',
+                'requirements' => 'MS or PhD in Computer Science, Machine Learning, or related field, Experience with TensorFlow or PyTorch, Strong Python programming skills, Knowledge of NLP, computer vision, or reinforcement learning',
+                'location' => 'Seattle, WA',
+                'salary_range' => '$120,000 - $150,000',
+                'job_type' => 'full-time',
+                'work_location_type' => 'hybrid',
+                'experience_level' => 'senior-level',
+                'application_url' => 'https://nextgenai.example.com/careers',
+                'deadline' => '2025-08-15',
+                'status' => 'open',
+            ],
         ];
 
         foreach ($jobs as $job) {

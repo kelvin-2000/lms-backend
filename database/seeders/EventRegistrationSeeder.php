@@ -42,19 +42,19 @@ class EventRegistrationSeeder extends Seeder
             }
         }
 
-        // For the detailed Web Development Trends event, ensure we have 312 attendees as in the mock data
+        // For the detailed Web Development Trends event, ensure we have 5 attendees as in the mock data
         $webDevEvent = Event::where('title', 'Web Development Trends 2023')->first();
         if ($webDevEvent) {
             // Get current registration count
             $currentCount = EventRegistration::where('event_id', $webDevEvent->id)->count();
             
             // If we need more registrations to match the mock data
-            $targetCount = 312;
+            $targetCount = 6;
             if ($currentCount < $targetCount) {
                 $neededCount = $targetCount - $currentCount;
                 
                 // Create some fake users and register them
-                for ($i = 0; $i < $neededCount; $i++) {
+                for ($i = 1; $i < $neededCount; $i++) {
                     $fakeUser = User::create([
                         'name' => "Event Attendee $i",
                         'email' => "event.attendee$i@example.com",

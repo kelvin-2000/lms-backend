@@ -75,7 +75,7 @@ class EventController extends Controller
             'location' => 'required|string|max:255',
             'thumbnail' => 'nullable|string|max:255',
             'capacity' => 'nullable|integer|min:1',
-            'type' => 'required|in:webinar,workshop,conference,other',
+            'type' => 'required|in:webinar,workshop,conference,bootcamp,other',
             'status' => 'required|in:upcoming,ongoing,completed',
         ]);
 
@@ -119,7 +119,7 @@ class EventController extends Controller
             'location' => 'sometimes|required|string|max:255',
             'thumbnail' => 'nullable|string|max:255',
             'capacity' => 'nullable|integer|min:1',
-            'type' => 'sometimes|required|in:webinar,workshop,conference,other',
+            'type' => 'sometimes|required|in:webinar,workshop,conference,bootcamp,other',
             'status' => 'sometimes|required|in:upcoming,ongoing,completed',
         ]);
 
