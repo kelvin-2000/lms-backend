@@ -168,6 +168,7 @@ class CourseController extends Controller
                 return [
                     'id' => $video->id,
                     'title' => $video->title,
+                    'description' => $video->description,
                     'duration' => $video->duration,
                     'videoUrl' => $video->video_url,
                     'isFree' => $video->is_free,

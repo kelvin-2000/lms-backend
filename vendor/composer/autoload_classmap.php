@@ -6,6 +6,8 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Console\\Commands\\FixCoursesStudentCount' => $baseDir . '/app/Console/Commands/FixCoursesStudentCount.php',
+    'App\\Console\\Commands\\UpdateMentorshipProgramStatus' => $baseDir . '/app/Console/Commands/UpdateMentorshipProgramStatus.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\AuthController' => $baseDir . '/app/Http/Controllers/AuthController.php',

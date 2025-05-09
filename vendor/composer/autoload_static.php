@@ -530,6 +530,8 @@ class ComposerStaticInit17bdc5c16daaf2d04c3740c8cae5ae45
     );
 
     public static $classMap = array (
+        'App\\Console\\Commands\\FixCoursesStudentCount' => __DIR__ . '/../..' . '/app/Console/Commands/FixCoursesStudentCount.php',
+        'App\\Console\\Commands\\UpdateMentorshipProgramStatus' => __DIR__ . '/../..' . '/app/Console/Commands/UpdateMentorshipProgramStatus.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',

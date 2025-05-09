@@ -15,8 +15,7 @@ class EventController extends Controller
      */
     public function upcoming(Request $request)
     {
-        $query = Event::where('status', 'upcoming')
-            ->where('start_date', '>=', now());
+        $query = Event::where('start_date', '>=', now());
 
         // Search by title or description if search parameter is provided
         if ($request->filled('search')) {
